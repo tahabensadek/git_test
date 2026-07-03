@@ -126,8 +126,15 @@
     return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
+  var shownBalance = state.balance;
   function renderBalance() {
-    $('balance').textContent = fmt(state.balance);
+    var el = $('balance');
+    if (window.FX) {
+      FX.countUp(el, shownBalance, state.balance, 450, fmt);
+    } else {
+      el.textContent = fmt(state.balance);
+    }
+    shownBalance = state.balance;
     var pill = $('balance-pill');
     pill.classList.remove('bump');
     void pill.offsetWidth; // restart animation
@@ -175,6 +182,15 @@
     save();
     renderStats();
     renderMyBets();
+
+    if (window.FX && profit > 0) {
+      var pill = $('balance-pill').getBoundingClientRect();
+      if (mult >= 10) {
+        FX.bigWin();
+      } else {
+        FX.burst(pill.left + pill.width / 2, pill.bottom + 6, mult >= 3 ? 46 : 22);
+      }
+    }
     return profit;
   }
 
@@ -367,11 +383,48 @@
   window.PF = PF;
   window.Sound = Sound;
 
+  /* ---------------- win ticker & payout odometer ---------------- */
+  function buildTicker() {
+    var track = $('ticker-track');
+    if (!track) return;
+    var items = [];
+    for (var i = 0; i < 14; i++) {
+      var name = feedNames[Math.floor(Math.random() * feedNames.length)];
+      var game = feedGames[Math.floor(Math.random() * feedGames.length)];
+      var amt = Math.round((Math.random() * Math.random() * 4000 + 20) * 100) / 100;
+      items.push('<span class="tick-item">🏆 <b>' + name + '</b> won <em>' + fmt(amt) + '</em> on ' + game + '</span>');
+    }
+    // duplicate for a seamless marquee loop
+    track.innerHTML = items.join('') + items.join('');
+  }
+
+  var payoutTotal = 8431220 + Math.floor(Math.random() * 90000);
+  function payoutTick() {
+    var el = $('payout-odometer');
+    if (!el) return;
+    var next = payoutTotal + Math.floor(80 + Math.random() * 1800);
+    if (window.FX) {
+      FX.countUp(el, payoutTotal, next, 900, function (n) {
+        return Math.floor(n).toLocaleString('en-US');
+      });
+    } else {
+      el.textContent = next.toLocaleString('en-US');
+    }
+    payoutTotal = next;
+  }
+
   /* ---------------- boot ---------------- */
   renderBalance();
   renderStats();
   renderMyBets();
   PF.renderModal();
+  buildTicker();
+  payoutTick();
+  setInterval(payoutTick, 2100);
   for (var i = 0; i < 6; i++) liveFeedTick();
   setInterval(liveFeedTick, 2600);
+  if (window.FX) {
+    FX.tilt('.game-card');
+    FX.collectPlx();
+  }
 })();

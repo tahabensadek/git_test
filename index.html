@@ -8,6 +8,9 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<canvas id="bg-canvas" aria-hidden="true"></canvas>
+<canvas id="fx-canvas" aria-hidden="true"></canvas>
+<div id="screen-flash" aria-hidden="true"></div>
 <div id="app">
 
   <!-- ============ SIDEBAR ============ -->
@@ -84,17 +87,32 @@
 
       <!-- ============ HOME ============ -->
       <section class="page active" id="page-home">
+        <div class="win-ticker" aria-hidden="true">
+          <div class="ticker-track" id="ticker-track"></div>
+        </div>
+
         <div class="hero">
+          <div class="hero-orb ho1 plx" data-depth="34"></div>
+          <div class="hero-orb ho2 plx" data-depth="20"></div>
+          <div class="hero-beam" aria-hidden="true"></div>
           <div class="hero-inner">
-            <div class="hero-badge">⚡ Provably fair · 7 originals</div>
-            <h1>Play the house.<br><span class="grad-text">Beat the odds.</span></h1>
+            <div class="hero-badge"><span class="pulse-dot"></span> Provably fair · 7 originals · live now</div>
+            <h1 class="hero-title">Play the house.<br><span class="grad-text shimmer">Beat the odds.</span></h1>
             <p>A fully local, play-money casino. Every result is generated from cryptographic seeds you can verify.</p>
-            <button class="btn btn-gold btn-lg" data-nav="dice">Start Playing</button>
+            <div class="hero-cta-row">
+              <button class="btn btn-gold btn-lg btn-sheen" data-nav="dice">Start Playing</button>
+              <div class="payout-counter">
+                <span class="payout-label">Paid out today</span>
+                <span class="payout-value">🪙 <span id="payout-odometer">8,431,220</span></span>
+              </div>
+            </div>
           </div>
-          <div class="hero-art">
+          <div class="hero-art plx" data-depth="12">
             <div class="float-chip c1">7×</div>
             <div class="float-chip c2">2.00×</div>
             <div class="float-chip c3">💎</div>
+            <div class="float-card fc1">A♠</div>
+            <div class="float-card fc2">K♥</div>
             <div class="hero-dice">🎲</div>
           </div>
         </div>
@@ -401,6 +419,7 @@
 <div id="toasts"></div>
 
 <script src="js/sha256.js"></script>
+<script src="js/fx.js"></script>
 <script src="js/engine.js"></script>
 <script src="js/games/dice.js"></script>
 <script src="js/games/coinflip.js"></script>
