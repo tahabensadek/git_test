@@ -27,7 +27,12 @@
       nonce: 0,
       soundOn: true,
       stats: { wagered: 0, profit: 0, wins: 0, losses: 0, bigWin: 0 },
-      history: []
+      history: [],
+      xp: 0,
+      streak: 0,
+      played: {},
+      ach: {},
+      lastBonus: 0
     };
   };
 
@@ -179,6 +184,15 @@
     }
     state.history.unshift({ game: game, bet: bet, mult: mult, profit: profit });
     if (state.history.length > 30) state.history.length = 30;
+
+    // progression: XP from wagers, streaks, achievements
+    state.xp = Math.round((state.xp + bet) * 100) / 100;
+    state.played[game] = 1;
+    if (profit > 0) state.streak++;
+    else if (profit < 0) state.streak = 0;
+    checkAchievements(mult);
+    renderRank();
+
     save();
     renderStats();
     renderMyBets();
@@ -383,6 +397,159 @@
   window.PF = PF;
   window.Sound = Sound;
 
+  /* ---------------- XP, ranks & level-ups ---------------- */
+  var RANKS = ['Rookie', 'Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Master', 'Nebula'];
+  function levelInfo() {
+    var lvl = Math.floor(Math.sqrt(state.xp / 150));
+    var cur = 150 * lvl * lvl;
+    var next = 150 * (lvl + 1) * (lvl + 1);
+    return {
+      lvl: lvl,
+      rank: RANKS[Math.min(lvl, RANKS.length - 1)],
+      pct: Math.min(100, ((state.xp - cur) / (next - cur)) * 100),
+      toNext: Math.max(0, next - state.xp)
+    };
+  }
+  var lastLvl = levelInfo().lvl;
+  function renderRank() {
+    var info = levelInfo();
+    if (!$('rank-name')) return;
+    $('rank-name').textContent = info.rank;
+    $('rank-lvl').textContent = 'LVL ' + info.lvl;
+    $('rank-fill').style.width = info.pct + '%';
+    $('rank-sub').textContent = Math.ceil(info.toNext).toLocaleString('en-US') + ' XP to next level';
+    if (info.lvl > lastLvl) {
+      lastLvl = info.lvl;
+      Sound.bigwin();
+      if (window.FX) FX.bigWin();
+      toast('⬆️ LEVEL UP — ' + info.rank + ' · LVL ' + info.lvl, 'win');
+    }
+  }
+
+  /* ---------------- achievements ---------------- */
+  var ACH = [
+    { id: 'first_bet', icon: '🎯', name: 'First Blood', desc: 'Place your first bet' },
+    { id: 'first_win', icon: '🥇', name: 'Winner Winner', desc: 'Win a bet' },
+    { id: 'x10', icon: '🚀', name: 'To the Moon', desc: 'Hit a 10× win' },
+    { id: 'x50', icon: '💎', name: 'Diamond Hands', desc: 'Hit a 50× win' },
+    { id: 'jackpot', icon: '🌌', name: 'Nebula Jackpot', desc: 'Hit a 100× win' },
+    { id: 'streak5', icon: '🔥', name: 'On Fire', desc: 'Win 5 bets in a row' },
+    { id: 'wager1k', icon: '💰', name: 'High Roller', desc: 'Wager 1,000 total' },
+    { id: 'wager10k', icon: '👑', name: 'Whale', desc: 'Wager 10,000 total' },
+    { id: 'allgames', icon: '🃏', name: 'Tourist', desc: 'Play all 7 originals' },
+    { id: 'rich5k', icon: '🏦', name: 'Vault Filler', desc: 'Hold a 5,000 balance' }
+  ];
+  function unlock(id) {
+    if (state.ach[id]) return;
+    state.ach[id] = 1;
+    var def = null;
+    for (var i = 0; i < ACH.length; i++) if (ACH[i].id === id) def = ACH[i];
+    if (def) toast('🏅 Achievement — ' + def.name + ': ' + def.desc, 'win');
+    Sound.reveal();
+    save();
+    renderAch();
+  }
+  function checkAchievements(mult) {
+    if (state.stats.wagered > 0) unlock('first_bet');
+    if (state.stats.wins > 0) unlock('first_win');
+    if (mult >= 10) unlock('x10');
+    if (mult >= 50) unlock('x50');
+    if (mult >= 100) unlock('jackpot');
+    if (state.streak >= 5) unlock('streak5');
+    if (state.stats.wagered >= 1000) unlock('wager1k');
+    if (state.stats.wagered >= 10000) unlock('wager10k');
+    if (Object.keys(state.played).length >= 7) unlock('allgames');
+    if (state.balance >= 5000) unlock('rich5k');
+  }
+  function renderAch() {
+    var grid = $('ach-grid');
+    if (!grid) return;
+    grid.innerHTML = ACH.map(function (a) {
+      var got = !!state.ach[a.id];
+      return '<div class="ach' + (got ? ' got' : '') + '" title="' + a.desc + '">' +
+        '<span class="ach-icon">' + a.icon + '</span>' +
+        '<span class="ach-name">' + a.name + '</span>' +
+        '<span class="ach-desc">' + a.desc + '</span></div>';
+    }).join('');
+  }
+
+  /* ---------------- bonus wheel ---------------- */
+  var BONUS_CD = 3600 * 1000; // one free spin per hour
+  var BONUS_PRIZES = [50, 100, 25, 250, 75, 150, 40, 500];
+  var bonusSpinning = false;
+  var bwheelBase = 0;
+
+  function bonusReady() { return Date.now() - (state.lastBonus || 0) >= BONUS_CD; }
+
+  function renderBonusState() {
+    var dot = $('bonus-dot');
+    if (dot) dot.classList.toggle('on', bonusReady());
+    var cd = $('bonus-cd');
+    var btn = $('bonus-spin');
+    if (!cd || !btn) return;
+    if (bonusSpinning) return;
+    if (bonusReady()) {
+      btn.disabled = false;
+      cd.textContent = 'One free spin every hour — good luck!';
+    } else {
+      btn.disabled = true;
+      var mins = Math.ceil((BONUS_CD - (Date.now() - state.lastBonus)) / 60000);
+      cd.textContent = 'Next free spin in ' + mins + ' min';
+    }
+  }
+
+  function spinBonus() {
+    if (bonusSpinning || !bonusReady()) return;
+    bonusSpinning = true;
+    $('bonus-spin').disabled = true;
+    Sound.bet();
+
+    var idx = Math.floor(PF.float() * 8);
+    var prize = BONUS_PRIZES[idx];
+    var wheel = $('bwheel');
+    // reset to current angle without transition, then ease out to target
+    wheel.style.transition = 'none';
+    wheel.style.transform = 'rotate(' + (bwheelBase % 360) + 'deg)';
+    void wheel.offsetWidth;
+    var target = (bwheelBase % 360) + 5 * 360 + (360 - (idx * 45 + 22.5)) - (bwheelBase % 360);
+    bwheelBase = target;
+    wheel.style.transition = 'transform 4.2s cubic-bezier(.12, .7, .12, 1)';
+    wheel.style.transform = 'rotate(' + target + 'deg)';
+
+    var ticks = 0;
+    var tt = setInterval(function () { Sound.tick(); if (++ticks > 24) clearInterval(tt); }, 140);
+
+    setTimeout(function () {
+      clearInterval(tt);
+      state.lastBonus = Date.now();
+      credit(prize);
+      save();
+      Sound.bigwin();
+      if (window.FX) {
+        var r = wheel.getBoundingClientRect();
+        FX.burst(r.left + r.width / 2, r.top + r.height / 2, 60, true);
+      }
+      toast('🎁 Bonus spin — +' + fmt(prize) + '!', 'win');
+      bonusSpinning = false;
+      renderBonusState();
+    }, 4400);
+  }
+
+  function openBonus() {
+    renderBonusState();
+    $('modal-bonus').classList.add('open');
+  }
+
+  if ($('btn-bonus')) $('btn-bonus').addEventListener('click', openBonus);
+  if ($('bonus-spin')) $('bonus-spin').addEventListener('click', spinBonus);
+  if ($('promo-bonus')) $('promo-bonus').addEventListener('click', openBonus);
+  if ($('promo-pf')) $('promo-pf').addEventListener('click', function () { PF.renderModal(); $('modal-fairness').classList.add('open'); });
+  if ($('promo-ach')) $('promo-ach').addEventListener('click', function () {
+    var el = $('ach-title');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  if ($('foot-pf')) $('foot-pf').addEventListener('click', function (e) { e.preventDefault(); PF.renderModal(); $('modal-fairness').classList.add('open'); });
+
   /* ---------------- win ticker & payout odometer ---------------- */
   function buildTicker() {
     var track = $('ticker-track');
@@ -417,6 +584,10 @@
   renderBalance();
   renderStats();
   renderMyBets();
+  renderRank();
+  renderAch();
+  renderBonusState();
+  setInterval(renderBonusState, 30000);
   PF.renderModal();
   buildTicker();
   payoutTick();
