@@ -745,3 +745,34 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield; }
   .hero-cta-row { gap: 14px; }
   .float-card { display: none; }
 }
+
+/* ================================================================
+   GAME-CARD ART TILES (Higgsfield vector set, emoji fallback)
+   ================================================================ */
+.game-card { padding: 0; aspect-ratio: 4 / 5; display: flex; flex-direction: column; justify-content: flex-end; }
+.gc-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; border-radius: inherit;
+  transition: transform .35s cubic-bezier(.2, .8, .25, 1);
+  pointer-events: none;
+}
+.game-card:hover .gc-img { transform: scale(1.07); }
+.gc-text {
+  position: relative; z-index: 1; padding: 34px 16px 14px;
+  background: linear-gradient(transparent, rgba(11, 14, 20, .55) 30%, rgba(11, 14, 20, .96));
+  border-radius: 0 0 16px 16px;
+}
+/* emoji becomes the centered fallback when the art can't load */
+.game-card .gc-emoji {
+  display: none; position: absolute; inset: 0 0 20%;
+  align-items: center; justify-content: center; margin: 0;
+}
+.game-card.no-art .gc-emoji { display: flex; }
+
+.hero-bg {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center right;
+  opacity: .32; z-index: 0; pointer-events: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent 4%, #000 45%);
+  mask-image: linear-gradient(90deg, transparent 4%, #000 45%);
+}

@@ -1,0 +1,24 @@
+{
+  "comment": "Higgsfield z_image renders for NEBULA casino, flat vector set, generated 2026-07-04",
+  "cdn_host": "d8j0ntlcm91z4.cloudfront.net",
+  "assets": {
+    "dice": "https://d8j0ntlcm91z4.cloudfront.net/user_3G0ccJ5gV32niyIZg5PyIugy8Rw/hf_20260704_004241_9984322f-cb6d-461f-a1e0-d1821c3d12c6.png",
+    "crash": "https://d8j0ntlcm91z4.cloudfront.net/user_3G0ccJ5gV32niyIZg5PyIugy8Rw/hf_20260704_004411_dc5b0f70-dbae-44f6-8e83-cb0bb8931564.png",
+    "mines": "https://d8j0ntlcm91z4.cloudfront.net/user_3G0ccJ5gV32niyIZg5PyIugy8Rw/hf_20260704_004414_68b61abd-102f-4883-abc3-ba6347164250.png",
+    "plinko": "https://d8j0ntlcm91z4.cloudfront.net/user_3G0ccJ5gV32niyIZg5PyIugy8Rw/hf_20260704_004415_11cdc5b8-da7a-4202-b9a4-b3e83a36df23.png",
+    "roulette": "https://d8j0ntlcm91z4.cloudfront.net/user_3G0ccJ5gV32niyIZg5PyIugy8Rw/hf_20260704_004415_d3832f0a-6a0c-4d9e-a2d8-13afd6a6622d.png",
+    "blackjack": "https://d8j0ntlcm91z4.cloudfront.net/user_3G0ccJ5gV32niyIZg5PyIugy8Rw/hf_20260704_004523_ca9d63d2-453b-48ec-ab9a-42722f1abf29.png",
+    "coinflip": "https://d8j0ntlcm91z4.cloudfront.net/user_3G0ccJ5gV32niyIZg5PyIugy8Rw/hf_20260704_004608_04189bd4-8048-4688-82a6-92940bdf34e7.png",
+    "hero": "https://d8j0ntlcm91z4.cloudfront.net/user_3G0ccJ5gV32niyIZg5PyIugy8Rw/hf_20260704_004655_7b8ba6a2-a3db-4966-81d5-2c04448f2769.png"
+  },
+  "job_ids": {
+    "dice": "9984322f-cb6d-461f-a1e0-d1821c3d12c6",
+    "crash": "dc5b0f70-dbae-44f6-8e83-cb0bb8931564",
+    "mines": "68b61abd-102f-4883-abc3-ba6347164250",
+    "plinko": "11cdc5b8-da7a-4202-b9a4-b3e83a36df23",
+    "roulette": "d3832f0a-6a0c-4d9e-a2d8-13afd6a6622d",
+    "blackjack": "ca9d63d2-453b-48ec-ab9a-42722f1abf29",
+    "coinflip": "04189bd4-8048-4688-82a6-92940bdf34e7",
+    "hero": "7b8ba6a2-a3db-4966-81d5-2c04448f2769"
+  }
+}
