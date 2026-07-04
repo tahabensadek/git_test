@@ -776,3 +776,121 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield; }
   -webkit-mask-image: linear-gradient(90deg, transparent 4%, #000 45%);
   mask-image: linear-gradient(90deg, transparent 4%, #000 45%);
 }
+
+/* ================================================================
+   HERO v3 — "The Arena": 3D die, holo grid floor, spark streaks
+   ================================================================ */
+.hero { min-height: 400px; }
+.hero-title {
+  font-size: clamp(36px, 4.6vw, 54px);
+  text-transform: uppercase; letter-spacing: -.5px; line-height: 1.05;
+  text-shadow: 0 0 40px rgba(255, 182, 54, .25);
+}
+
+/* holographic perspective floor */
+.hero-floor {
+  position: absolute; left: -25%; right: -25%; bottom: -46px; height: 52%;
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 182, 54, .16) 0 1px, transparent 1px 70px),
+    repeating-linear-gradient(0deg, rgba(255, 182, 54, .16) 0 1px, transparent 1px 34px),
+    linear-gradient(rgba(79, 140, 255, .05), rgba(255, 182, 54, .06));
+  transform: perspective(420px) rotateX(62deg);
+  transform-origin: 50% 100%;
+  animation: floorscroll 2.6s linear infinite;
+  -webkit-mask-image: linear-gradient(transparent, #000 55%);
+  mask-image: linear-gradient(transparent, #000 55%);
+  pointer-events: none; z-index: 0;
+}
+@keyframes floorscroll { to { background-position: 0 34px, 0 34px, 0 0; } }
+
+.hero-sparks { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+
+/* ---------- the 3D golden die ---------- */
+.hero-scene { position: relative; width: 300px; height: 260px; z-index: 1; }
+.die3d-wrap {
+  position: absolute; left: 50%; top: 46%;
+  transform: translate(-50%, -50%);
+  perspective: 900px;
+}
+.die3d-wrap::before {
+  content: ""; position: absolute; left: 50%; top: 50%;
+  width: 220px; height: 220px; transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255, 182, 54, .28), transparent 65%);
+  pointer-events: none;
+}
+.die3d {
+  width: 128px; height: 128px; position: relative;
+  transform-style: preserve-3d; /* no filter here — it would flatten the cube */
+  animation: dietumble 14s linear infinite;
+}
+.die3d:hover { animation-duration: 3.5s; }
+@keyframes dietumble {
+  from { transform: rotateX(-16deg) rotateY(0deg) rotateZ(6deg); }
+  to   { transform: rotateX(-16deg) rotateY(360deg) rotateZ(6deg); }
+}
+.dface {
+  position: absolute; inset: 0; border-radius: 22px;
+  background:
+    radial-gradient(circle at 30% 25%, #ffe3a3, #ffb636 55%, #e08c12);
+  border: 2px solid rgba(120, 74, 6, .55);
+  box-shadow: inset 0 0 26px rgba(120, 74, 6, .35);
+  backface-visibility: hidden;
+}
+/* pip layouts via layered radial-gradients (navy pips) */
+.dface { --pip: radial-gradient(circle 11px, #182038 98%, transparent); }
+.df1 { transform: rotateY(0deg) translateZ(64px);
+  background-image: var(--pip), radial-gradient(circle at 30% 25%, #ffe3a3, #ffb636 55%, #e08c12);
+  background-position: center; background-repeat: no-repeat; }
+.df2 { transform: rotateY(90deg) translateZ(64px);
+  background-image: var(--pip), var(--pip), radial-gradient(circle at 30% 25%, #ffe3a3, #ffb636 55%, #e08c12);
+  background-position: 26% 26%, 74% 74%; background-repeat: no-repeat; }
+.df3 { transform: rotateY(180deg) translateZ(64px);
+  background-image: var(--pip), var(--pip), var(--pip), radial-gradient(circle at 30% 25%, #ffe3a3, #ffb636 55%, #e08c12);
+  background-position: 24% 24%, center, 76% 76%; background-repeat: no-repeat; }
+.df4 { transform: rotateY(-90deg) translateZ(64px);
+  background-image: var(--pip), var(--pip), var(--pip), var(--pip), radial-gradient(circle at 30% 25%, #ffe3a3, #ffb636 55%, #e08c12);
+  background-position: 26% 26%, 74% 26%, 26% 74%, 74% 74%; background-repeat: no-repeat; }
+.df5 { transform: rotateX(90deg) translateZ(64px);
+  background-image: var(--pip), var(--pip), var(--pip), var(--pip), var(--pip), radial-gradient(circle at 30% 25%, #ffe3a3, #ffb636 55%, #e08c12);
+  background-position: 24% 24%, 76% 24%, center, 24% 76%, 76% 76%; background-repeat: no-repeat; }
+.df6 { transform: rotateX(-90deg) translateZ(64px);
+  background-image: var(--pip), var(--pip), var(--pip), var(--pip), var(--pip), var(--pip), radial-gradient(circle at 30% 25%, #ffe3a3, #ffb636 55%, #e08c12);
+  background-position: 28% 22%, 28% 50%, 28% 78%, 72% 22%, 72% 50%, 72% 78%; background-repeat: no-repeat; }
+
+.die-shadow {
+  position: absolute; left: 50%; bottom: -74px; transform: translateX(-50%);
+  width: 150px; height: 30px; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, .55), transparent 70%);
+  animation: shadowpulse 14s linear infinite;
+}
+@keyframes shadowpulse { 50% { transform: translateX(-50%) scale(.86); opacity: .7; } }
+
+/* floating props reposition around the die */
+.hero-scene .float-card.fc1 { left: -26px; top: 12px; }
+.hero-scene .float-card.fc2 { right: -14px; bottom: 6px; }
+.hero-scene .float-chip.c1 { top: -8px; left: 42px; }
+.hero-scene .float-chip.c2 { bottom: 18px; left: -8px; }
+.hero-scene .float-chip.c3 { top: 4px; right: 28px; }
+
+/* ---------- mobile choreography ---------- */
+@media (max-width: 1100px) {
+  .hero { flex-direction: column-reverse; align-items: center; text-align: center; padding: 30px 22px 40px; gap: 8px; }
+  .hero-art { display: block; }
+  .hero-scene { width: 240px; height: 210px; margin-top: 6px; }
+  .die3d { width: 104px; height: 104px; }
+  .df1, .df2, .df3, .df4 { transform-origin: center; }
+  .df1 { transform: rotateY(0deg) translateZ(52px); }
+  .df2 { transform: rotateY(90deg) translateZ(52px); }
+  .df3 { transform: rotateY(180deg) translateZ(52px); }
+  .df4 { transform: rotateY(-90deg) translateZ(52px); }
+  .df5 { transform: rotateX(90deg) translateZ(52px); }
+  .df6 { transform: rotateX(-90deg) translateZ(52px); }
+  .hero-inner { max-width: none; display: flex; flex-direction: column; align-items: center; }
+  .hero-cta-row { justify-content: center; }
+  .hero-cta-row .btn-lg { padding: 15px 34px; font-size: 17px; }
+  .hero-title { font-size: clamp(32px, 9vw, 44px); }
+  .hero-bg { object-position: center; opacity: .22; -webkit-mask-image: none; mask-image: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .die3d, .die-shadow, .hero-floor { animation: none !important; }
+}
