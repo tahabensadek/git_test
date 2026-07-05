@@ -1104,3 +1104,80 @@ select.auto-input { background: var(--panel); }
   .reel .cell { height: 62px; font-size: 30px; }
   .limbo-result { font-size: 56px; }
 }
+
+/* ================================================================
+   STARFALL — 5x3 video slot
+   ================================================================ */
+.gc-starfall { background: linear-gradient(150deg, #241640, var(--panel) 70%); }
+#page-starfall .game-stage { background: radial-gradient(620px 420px at 50% 0%, rgba(139, 92, 246, .1), transparent 70%), var(--panel); }
+
+.sf-stage { display: flex; flex-direction: column; align-items: center; gap: 16px; width: 100%; position: relative; }
+.sf-banner {
+  font-weight: 800; font-size: 15px; letter-spacing: 3px;
+  background: linear-gradient(120deg, #b981ff, #ffce6b);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  transition: .3s;
+}
+.sf-machine {
+  padding: 18px; border-radius: 20px;
+  background: linear-gradient(160deg, #1e1733, #12151f);
+  border: 2px solid #4c3a78;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, .5), 0 0 34px rgba(139, 92, 246, .14);
+  transition: box-shadow .4s, border-color .4s;
+}
+.sf-grid { display: flex; gap: 8px; }
+.sf-reel { display: flex; flex-direction: column; gap: 8px; }
+.sf-cell {
+  width: 74px; height: 66px; border-radius: 10px;
+  background: #0d1119; border: 1px solid #2c2444;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px; transition: transform .15s, box-shadow .2s, border-color .2s;
+}
+.sf-reel.spin .sf-cell { filter: blur(2px); }
+.sf-reel.lock { animation: reellock .3s cubic-bezier(.2, .9, .3, 1.4); }
+.sf-cell.hit {
+  border-color: rgba(255, 182, 54, .8);
+  box-shadow: 0 0 16px rgba(255, 182, 54, .45), inset 0 0 10px rgba(255, 182, 54, .15);
+  animation: sfhit .6s ease infinite alternate;
+}
+.sf-cell.scat {
+  border-color: rgba(185, 129, 255, .9);
+  box-shadow: 0 0 18px rgba(185, 129, 255, .55);
+  animation: sfhit .5s ease infinite alternate;
+}
+@keyframes sfhit { to { transform: scale(1.09); } }
+
+.sf-msg { font-family: var(--mono); font-weight: 800; font-size: 15px; min-height: 24px; text-align: center; }
+.sf-msg.win { color: var(--green); }
+.sf-msg.lose { color: var(--red); }
+
+/* free-spins ambiance */
+.sf-stage.fs-mode .sf-machine {
+  border-color: #b981ff;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, .5), 0 0 54px rgba(185, 129, 255, .4);
+}
+.sf-stage.fs-mode .sf-banner { letter-spacing: 1.5px; animation: fsflash 1s ease infinite alternate; }
+@keyframes fsflash { to { filter: brightness(1.5); } }
+
+/* big win overlay */
+.sf-bigwin {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 4px;
+  pointer-events: none; opacity: 0; transform: scale(.6); transition: .25s;
+  z-index: 5;
+}
+.sf-bigwin.show { opacity: 1; transform: scale(1); animation: bigwinpulse .5s cubic-bezier(.2, .9, .3, 1.4); }
+.sf-bigwin span {
+  font-size: 44px; font-weight: 900; letter-spacing: 4px;
+  background: linear-gradient(120deg, #fff3d6, #ffb636, #ff8c1f);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: none; filter: drop-shadow(0 6px 24px rgba(255, 182, 54, .6));
+}
+.sf-bigwin b { font-family: var(--mono); font-size: 26px; color: var(--green); }
+@keyframes bigwinpulse { 50% { transform: scale(1.15); } }
+
+@media (max-width: 900px) {
+  .sf-cell { width: 54px; height: 50px; font-size: 24px; border-radius: 8px; }
+  .sf-grid, .sf-reel { gap: 5px; }
+  .sf-bigwin span { font-size: 30px; }
+}

@@ -251,7 +251,7 @@
   var pageTitles = {
     home: 'Home', dice: 'Dice', crash: 'Crash', mines: 'Mines',
     plinko: 'Plinko', roulette: 'Roulette', blackjack: 'Blackjack', coinflip: 'Coinflip',
-    slots: 'Slots', limbo: 'Limbo'
+    slots: 'Slots', limbo: 'Limbo', starfall: 'Starfall'
   };
   var pageListeners = {};
 
@@ -297,7 +297,7 @@
   /* ---------------- fake live-bets feed ---------------- */
   var feedNames = ['Zephyr', 'Moonshot', 'kroko77', 'DegenKing', 'Aria', 'pixelpusha', 'NoRisk',
     'BigSlick', 'Juno', 'Frostbyte', 'ladyluck', 'Havoc', 'Rex', 'mistral', 'GoldRush9', 'sn0wman'];
-  var feedGames = ['Dice', 'Crash', 'Mines', 'Plinko', 'Roulette', 'Blackjack', 'Coinflip', 'Slots', 'Limbo'];
+  var feedGames = ['Dice', 'Crash', 'Mines', 'Plinko', 'Roulette', 'Blackjack', 'Coinflip', 'Slots', 'Limbo', 'Starfall'];
 
   function liveFeedTick() {
     var tbody = $('live-bets').querySelector('tbody');
@@ -442,7 +442,7 @@
     { id: 'streak5', icon: '🔥', name: 'On Fire', desc: 'Win 5 bets in a row' },
     { id: 'wager1k', icon: '💰', name: 'High Roller', desc: 'Wager 1,000 total' },
     { id: 'wager10k', icon: '👑', name: 'Whale', desc: 'Wager 10,000 total' },
-    { id: 'allgames', icon: '🃏', name: 'Tourist', desc: 'Play all 9 originals' },
+    { id: 'allgames', icon: '🃏', name: 'Tourist', desc: 'Play all 10 originals' },
     { id: 'rich5k', icon: '🏦', name: 'Vault Filler', desc: 'Hold a 5,000 balance' }
   ];
   function unlock(id) {
@@ -464,7 +464,7 @@
     if (state.streak >= 5) unlock('streak5');
     if (state.stats.wagered >= 1000) unlock('wager1k');
     if (state.stats.wagered >= 10000) unlock('wager10k');
-    if (Object.keys(state.played).length >= 9) unlock('allgames');
+    if (Object.keys(state.played).length >= 10) unlock('allgames');
     if (state.balance >= 5000) unlock('rich5k');
   }
   function renderAch() {

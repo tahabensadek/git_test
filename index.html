@@ -60,6 +60,10 @@
         <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 8v8M16 8v8" stroke-width="2" class="fuse" fill="none"/><circle cx="12" cy="12" r="1.6" class="dot"/></svg>
         <span>Slots</span>
       </a>
+      <a href="#" class="nav-item" data-nav="starfall">
+        <svg viewBox="0 0 24 24"><path d="M12 2l2.4 5.4L20 8.2l-4.2 3.8 1.3 5.8L12 14.9 6.9 17.8l1.3-5.8L4 8.2l5.6-.8z"/></svg>
+        <span>Starfall</span>
+      </a>
       <a href="#" class="nav-item" data-nav="limbo">
         <svg viewBox="0 0 24 24"><path d="M12 21V6M12 6l-5 5M12 6l5 5" stroke-width="2.4" fill="none" stroke="currentColor" stroke-linecap="round"/><path d="M4 3h16" stroke-width="2" stroke="currentColor"/></svg>
         <span>Limbo</span>
@@ -113,7 +117,7 @@
           <div class="hero-floor" aria-hidden="true"></div>
           <canvas class="hero-sparks" id="hero-sparks" aria-hidden="true"></canvas>
           <div class="hero-inner">
-            <div class="hero-badge"><span class="pulse-dot"></span> Live now · 9 originals · provably fair</div>
+            <div class="hero-badge"><span class="pulse-dot"></span> Live now · 10 originals · provably fair</div>
             <h1 class="hero-title">Your luck.<br><span class="grad-text shimmer">Your arena.</span></h1>
             <p>Seven house-beating originals. Zero downloads. Every roll verifiable, every win instant.</p>
             <div class="hero-cta-row">
@@ -379,6 +383,26 @@
               <path d="M148 132 h8 M152 128 v8" stroke="#eef1f7" stroke-width="1.4" opacity=".6"/>
             </svg>
             <div class="gc-text"><div class="gc-name">Limbo</div><div class="gc-sub">Up to 1000×</div></div>
+          </a>
+          <a href="#" class="game-card gc-starfall" data-nav="starfall">
+            <svg class="gc-svg" viewBox="0 0 200 250" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <defs><radialGradient id="bgJ" cx="50%" cy="28%" r="95%"><stop offset="0" stop-color="#2a1745"/><stop offset="1" stop-color="#0d0f18"/></radialGradient></defs>
+              <rect width="200" height="250" fill="url(#bgJ)"/>
+              <circle cx="30" cy="40" r="1.5" fill="#b981ff" opacity=".7"/><circle cx="172" cy="52" r="1.2" fill="#ffce6b" opacity=".7"/><circle cx="46" cy="212" r="1.3" fill="#eef1f7" opacity=".5"/>
+              <rect x="26" y="72" width="148" height="106" rx="12" fill="#161b28" stroke="#8b5cf6" stroke-width="2.5"/>
+              <g>
+                <rect x="36" y="84" width="24" height="82" rx="5" fill="#0d1119"/><rect x="63" y="84" width="24" height="82" rx="5" fill="#0d1119"/><rect x="90" y="84" width="24" height="82" rx="5" fill="#0d1119"/><rect x="117" y="84" width="24" height="82" rx="5" fill="#0d1119"/><rect x="144" y="84" width="24" height="82" rx="5" fill="#0d1119"/>
+              </g>
+              <text x="48" y="132" font-size="15" text-anchor="middle">🌟</text>
+              <text x="75" y="132" font-size="15" text-anchor="middle">🌟</text>
+              <text x="102" y="132" font-size="15" text-anchor="middle">🌟</text>
+              <text x="129" y="132" font-size="15" text-anchor="middle">7️⃣</text>
+              <text x="156" y="132" font-size="15" text-anchor="middle">🚀</text>
+              <line x1="34" y1="125" x2="166" y2="125" stroke="#b981ff" stroke-width="1.5" opacity=".6"/>
+              <path d="M100 40 l3.4 7.6 7.9 1.1 -5.9 5.4 1.8 8.2 -7.2-4.1 -7.2 4.1 1.8-8.2 -5.9-5.4 7.9-1.1z" fill="#ffce6b"/>
+              <path d="M42 196 h9 M46.5 191.5 v9" stroke="#b981ff" stroke-width="1.6" opacity=".8"/>
+            </svg>
+            <div class="gc-text"><div class="gc-name">Starfall</div><div class="gc-sub">5×3 · free spins ×2</div></div>
           </a>
         </div>
 
@@ -713,6 +737,49 @@
         </div>
       </section>
 
+      <!-- ============ STARFALL (5x3 video slot) ============ -->
+      <section class="page" id="page-starfall">
+        <div class="game-shell">
+          <div class="bet-panel">
+            <div class="bet-field">
+              <label>Bet Amount · 10 lines</label>
+              <div class="amount-row">
+                <div class="amount-wrap"><span class="mini-coin">🪙</span><input id="sf-amount" type="number" min="0" step="0.01" value="10.00"></div>
+                <button class="chip-btn" data-half>½</button>
+                <button class="chip-btn" data-double>2×</button>
+                <button class="chip-btn" data-max>Max</button>
+              </div>
+            </div>
+            <button class="btn btn-bet" id="sf-spin">Spin</button>
+            <div class="readout-grid">
+              <div class="readout"><label>Last Win</label><div id="sf-lastwin">—</div></div>
+              <div class="readout"><label>Free Spins</label><div id="sf-fsleft">0</div></div>
+              <div class="readout"><label>FS Total</label><div id="sf-fstotal">—</div></div>
+            </div>
+            <div class="paytable">
+              <div class="pay-row"><span>🌟 wild ×5</span><b class="gold-txt">120×</b></div>
+              <div class="pay-row"><span>7️⃣ ×5</span><b>60×</b></div>
+              <div class="pay-row"><span>👑 ×5</span><b>25×</b></div>
+              <div class="pay-row"><span>💎 ×5</span><b>12×</b></div>
+              <div class="pay-row"><span>🪐 ☄️ ⭐ 🌙 ×5</span><b>7.5–3.2×</b></div>
+              <div class="pay-row"><span>🚀 ×3+ anywhere</span><b class="gold-txt">8 free spins ×2</b></div>
+            </div>
+            <div class="pf-note">96% RTP · 🌟 substitutes all but 🚀 · wins pay left to right</div>
+          </div>
+          <div class="game-stage">
+            <div class="sf-stage" id="sf-stage">
+              <div class="sf-banner" id="sf-banner">⭐ STARFALL ⭐</div>
+              <div class="sf-machine">
+                <div class="sf-grid" id="sf-grid"></div>
+              </div>
+              <div class="sf-msg" id="sf-msg">Spin to play</div>
+              <div class="recent-chips" id="sf-recent"></div>
+              <div class="sf-bigwin" id="sf-bigwin"><span>★ BIG WIN ★</span><b id="sf-bigwin-amt"></b></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- ============ LIMBO ============ -->
       <section class="page" id="page-limbo">
         <div class="game-shell">
@@ -818,6 +885,7 @@
 <script src="js/games/roulette.js"></script>
 <script src="js/games/blackjack.js"></script>
 <script src="js/games/slots.js"></script>
+<script src="js/games/starfall.js"></script>
 <script src="js/games/limbo.js"></script>
 <script src="js/main.js"></script>
 </body>
