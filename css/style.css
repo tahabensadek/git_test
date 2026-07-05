@@ -1025,3 +1025,82 @@ input[type=number] { -moz-appearance: textfield; appearance: textfield; }
   .rank-widget { display: none; }
   .site-footer { justify-content: center; text-align: center; }
 }
+
+/* ================================================================
+   SLOTS · LIMBO · AUTO-BET
+   ================================================================ */
+.gc-slots { background: linear-gradient(150deg, #2c1526, var(--panel) 70%); }
+.gc-limbo { background: linear-gradient(150deg, #10262e, var(--panel) 70%); }
+
+/* auto-bet panel */
+.auto-panel { display: flex; flex-direction: column; gap: 8px; }
+.auto-input {
+  width: 100%; background: none; border: none; outline: none;
+  font-family: var(--mono); font-weight: 700; font-size: 14px;
+  color: var(--text); margin-top: 2px; padding: 0;
+}
+select.auto-input { background: var(--panel); }
+.btn-stop { background: linear-gradient(135deg, #ff6b7a, #d92b45) !important; color: #2a0509 !important; }
+
+/* slots */
+.slots-stage { display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; }
+.slots-cabinet {
+  position: relative; padding: 22px; border-radius: 20px;
+  background: linear-gradient(160deg, #1c2333, #12151f);
+  border: 2px solid var(--border-lite);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .05);
+}
+.slots-glow {
+  position: absolute; inset: -3px; border-radius: 22px; pointer-events: none;
+  box-shadow: 0 0 0 rgba(255, 182, 54, 0); transition: box-shadow .4s;
+}
+.slots-glow.win { box-shadow: 0 0 44px rgba(255, 182, 54, .5); }
+.reels { display: flex; gap: 12px; }
+.reel {
+  width: 96px; border-radius: 12px; overflow: hidden;
+  background: #0d1119; border: 1px solid var(--border-lite);
+  display: flex; flex-direction: column;
+}
+.reel .cell {
+  height: 78px; display: flex; align-items: center; justify-content: center;
+  font-size: 40px; border-bottom: 1px solid rgba(38, 46, 66, .5);
+}
+.reel .cell:last-child { border-bottom: none; }
+.reel .cell:first-child, .reel .cell:last-child { opacity: .34; filter: blur(.5px); font-size: 32px; }
+.reel.spin .cell { filter: blur(2px); }
+.reel.lock { animation: reellock .35s cubic-bezier(.2, .9, .3, 1.4); }
+@keyframes reellock { 0% { transform: translateY(-10px); } 60% { transform: translateY(3px); } 100% { transform: translateY(0); } }
+.payline {
+  position: absolute; left: 12px; right: 12px; top: 50%; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 182, 54, .75), transparent);
+  pointer-events: none;
+}
+.slots-result { font-family: var(--mono); font-weight: 800; font-size: 17px; min-height: 26px; }
+.slots-result.win { color: var(--green); }
+.slots-result.lose { color: var(--red); }
+.slots-result.push { color: var(--gold); }
+.paytable {
+  background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+  padding: 10px 14px; display: flex; flex-direction: column; gap: 4px;
+}
+.pay-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); }
+.pay-row b { font-family: var(--mono); color: var(--text); }
+.gold-txt { color: var(--gold) !important; }
+
+/* limbo */
+.limbo-stage { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.limbo-result {
+  font-family: var(--mono); font-size: 84px; font-weight: 800; letter-spacing: -3px;
+  text-shadow: 0 10px 50px rgba(0, 0, 0, .6);
+}
+.limbo-result.win { color: var(--green); text-shadow: 0 0 44px rgba(43, 217, 124, .4); }
+.limbo-result.lose { color: var(--red); }
+.limbo-target-line {
+  font-family: var(--mono); font-size: 13px; color: var(--muted);
+  border-top: 2px dashed rgba(255, 182, 54, .5); padding-top: 8px; min-width: 220px; text-align: center;
+}
+@media (max-width: 900px) {
+  .reel { width: 72px; }
+  .reel .cell { height: 62px; font-size: 30px; }
+  .limbo-result { font-size: 56px; }
+}

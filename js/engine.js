@@ -51,6 +51,7 @@
   /* ---------------- provably fair RNG ---------------- */
   var PF = {
     // Returns `count` floats in [0,1) for the current nonce, then bumps the nonce.
+    lastNonce: 0,
     floats: function (count) {
       var out = [];
       var block = 0;
@@ -61,6 +62,7 @@
         }
         block++;
       }
+      PF.lastNonce = state.nonce;
       state.nonce++;
       save();
       PF.renderModal();
@@ -182,7 +184,7 @@
     } else if (profit < 0) {
       state.stats.losses++;
     }
-    state.history.unshift({ game: game, bet: bet, mult: mult, profit: profit });
+    state.history.unshift({ game: game, bet: bet, mult: mult, profit: profit, nonce: PF.lastNonce });
     if (state.history.length > 30) state.history.length = 30;
 
     // progression: XP from wagers, streaks, achievements
@@ -220,7 +222,7 @@
   function renderMyBets() {
     var tbody = $('my-bets').querySelector('tbody');
     if (!state.history.length) {
-      tbody.innerHTML = '<tr class="empty-row"><td colspan="4">No bets yet — go play!</td></tr>';
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">No bets yet — go play!</td></tr>';
       return;
     }
     tbody.innerHTML = state.history.slice(0, 10).map(function (h) {
@@ -228,7 +230,8 @@
       var sign = h.profit > 0 ? '+' : '';
       return '<tr><td>' + h.game + '</td><td class="num">' + fmt(h.bet) +
         '</td><td class="num">' + h.mult.toFixed(2) + '×</td><td class="num ' + cls + '">' +
-        sign + fmt(h.profit) + '</td></tr>';
+        sign + fmt(h.profit) + '</td><td class="num" title="Verify with your seeds + this nonce">' +
+        (h.nonce != null ? '#' + h.nonce : '—') + '</td></tr>';
     }).join('');
   }
 
@@ -247,7 +250,8 @@
   /* ---------------- navigation ---------------- */
   var pageTitles = {
     home: 'Home', dice: 'Dice', crash: 'Crash', mines: 'Mines',
-    plinko: 'Plinko', roulette: 'Roulette', blackjack: 'Blackjack', coinflip: 'Coinflip'
+    plinko: 'Plinko', roulette: 'Roulette', blackjack: 'Blackjack', coinflip: 'Coinflip',
+    slots: 'Slots', limbo: 'Limbo'
   };
   var pageListeners = {};
 
@@ -286,12 +290,14 @@
       Sound.click();
       set(Math.min((parseFloat(input.value) || 0) * 2 || 1, state.balance));
     });
+    var max = row.querySelector('[data-max]');
+    if (max) max.addEventListener('click', function () { Sound.click(); set(state.balance); });
   });
 
   /* ---------------- fake live-bets feed ---------------- */
   var feedNames = ['Zephyr', 'Moonshot', 'kroko77', 'DegenKing', 'Aria', 'pixelpusha', 'NoRisk',
     'BigSlick', 'Juno', 'Frostbyte', 'ladyluck', 'Havoc', 'Rex', 'mistral', 'GoldRush9', 'sn0wman'];
-  var feedGames = ['Dice', 'Crash', 'Mines', 'Plinko', 'Roulette', 'Blackjack', 'Coinflip'];
+  var feedGames = ['Dice', 'Crash', 'Mines', 'Plinko', 'Roulette', 'Blackjack', 'Coinflip', 'Slots', 'Limbo'];
 
   function liveFeedTick() {
     var tbody = $('live-bets').querySelector('tbody');
@@ -436,7 +442,7 @@
     { id: 'streak5', icon: '🔥', name: 'On Fire', desc: 'Win 5 bets in a row' },
     { id: 'wager1k', icon: '💰', name: 'High Roller', desc: 'Wager 1,000 total' },
     { id: 'wager10k', icon: '👑', name: 'Whale', desc: 'Wager 10,000 total' },
-    { id: 'allgames', icon: '🃏', name: 'Tourist', desc: 'Play all 7 originals' },
+    { id: 'allgames', icon: '🃏', name: 'Tourist', desc: 'Play all 9 originals' },
     { id: 'rich5k', icon: '🏦', name: 'Vault Filler', desc: 'Hold a 5,000 balance' }
   ];
   function unlock(id) {
@@ -458,7 +464,7 @@
     if (state.streak >= 5) unlock('streak5');
     if (state.stats.wagered >= 1000) unlock('wager1k');
     if (state.stats.wagered >= 10000) unlock('wager10k');
-    if (Object.keys(state.played).length >= 7) unlock('allgames');
+    if (Object.keys(state.played).length >= 9) unlock('allgames');
     if (state.balance >= 5000) unlock('rich5k');
   }
   function renderAch() {
